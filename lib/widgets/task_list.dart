@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vrit_todo/model/task.dart';
 
+import '../blocs/bloc_barrier.dart';
+
 class TaskList extends StatelessWidget {
   const TaskList({
     Key? key,
@@ -19,9 +21,12 @@ class TaskList extends StatelessWidget {
           return ListTile(
             title: Text(task.title),
             trailing: Checkbox(
-              onChanged: (value) {},
+              onChanged: (value) {
+                context.read<TaskBloc>().add(UpdateTask(task: task));
+              },
               value: task.isDone,
             ),
+            onLongPress: () => context.read<TaskBloc>()..add(DeleteTask(task: task)),
           );
         });
   }
