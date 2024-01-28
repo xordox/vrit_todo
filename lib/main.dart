@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vrit_todo/blocs/bloc_barrier.dart';
+import 'package:vrit_todo/model/task.dart';
+
+import 'package:vrit_todo/screens/tasks_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,13 +13,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return BlocProvider(
+      create: (context) => TaskBloc()
+      ..add(AddTask(task: Task(title: "Task1"))),
+      child: MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: TaskScreen(),
+      home: const TasksScreen(),
+    ),
     );
   }
 }
