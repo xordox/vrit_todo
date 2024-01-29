@@ -1,28 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:vrit_todo/blocs/bloc_barrier.dart';
-import 'package:vrit_todo/model/task.dart';
+import 'package:vrit_todo/blocs/task_bloc_observer.dart';
+import 'package:vrit_todo/screens/tabs_screen.dart';
+import 'package:vrit_todo/services/app_router.dart';
+import 'package:vrit_todo/services/app_theme.dart';
 
-import 'package:vrit_todo/screens/tasks_screen.dart';
+import 'blocs/bloc_barrier.dart';
 
 void main() {
-  runApp(const MyApp());
+  Bloc.observer = TaskBlocObserver();
+  runApp( MyApp(appRouter: AppRouter(),));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key, required this.appRouter}) : super(key: key);
+  final AppRouter appRouter;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc(),
-      child: MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => TaskBloc()),
+        BlocProvider(create: (context) => ThemeBloc()),
+      ],
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: state.darkMode?
+            AppThemes.appThemeData[AppTheme.darkTheme]
+            :AppThemes.appThemeData[AppTheme.lightTheme],
+            home:  const TabsScreen(),
+            onGenerateRoute: appRouter.onGenerateRoute,
+          );
+        },
       ),
-      home: const TasksScreen(),
-    ),
     );
   }
 }

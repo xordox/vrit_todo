@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vrit_todo/model/task.dart';
-
-import '../blocs/bloc_barrier.dart';
+import 'package:vrit_todo/blocs/bloc_barrier.dart';
+import 'package:vrit_todo/models/task.dart';
+import 'package:vrit_todo/widgets/task_tile.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({
@@ -13,21 +13,38 @@ class TaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: tasksList.length,
-        itemBuilder: (context, index) {
-          Task task = tasksList[index];
-          return ListTile(
-            title: Text(task.title),
-            trailing: Checkbox(
-              onChanged: (value) {
-                context.read<TaskBloc>().add(UpdateTask(task: task));
-              },
-              value: task.isDone,
-            ),
-            onLongPress: () => context.read<TaskBloc>()..add(DeleteTask(task: task)),
-          );
-        });
+    return Expanded(
+      child: SingleChildScrollView(
+        child: ExpansionPanelList.radio(
+          children: tasksList
+          .map((task) => ExpansionPanelRadio(
+            value: task.id, 
+            headerBuilder: (context, isOpen) => TaskTile(task: task),
+             body: ListTile(
+               title: SelectableText.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: "Title:\n",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(text: task.title),
+                    const TextSpan(
+                      text: "\n\nDescription:\n",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(text: task.description),
+                  ]
+                )
+               ),
+             ))).toList(),
+        ),
+      ),
+    );
   }
 }
+
