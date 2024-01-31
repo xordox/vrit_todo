@@ -50,9 +50,19 @@ class TaskTile extends StatelessWidget {
                   width: 10,
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       task.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        decoration: task.isDone == true
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                    Text(
+                      task.description,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         decoration: task.isDone == true
@@ -64,6 +74,7 @@ class TaskTile extends StatelessWidget {
                         .add_yMMMd()
                         .add_Hms()
                         .format(DateTime.parse(task.date))),
+                        
                   ],
                 ),
               ],
